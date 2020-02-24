@@ -1,0 +1,30 @@
+{
+  "name": "devantech-usb-relay",
+  "version": "1.0.0",
+  "description": "Library for controlling a devantech USB-RLY16L, an 8-port USB relay board.",
+  "main": "index.js",
+  "dependencies": {
+    "serialport": "^8.0.7"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lspiehler/devantech-usb-relay.git"
+  },
+  "keywords": [
+    "devantech",
+    "USB-RLY16L",
+    "usb",
+    "serial",
+    "relay"
+  ],
+  "author": "Lyas Spiehler",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lspiehler/devantech-usb-relay/issues"
+  },
+  "homepage": "https://github.com/lspiehler/devantech-usb-relay#readme"
+}
