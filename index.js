@@ -269,9 +269,3 @@ module.exports = {
         });
     }
 }
-
-relayDemo({relay: 1, position: 0}, function(err) {
-    if(err) {
-        console.log(err);
-    }
-});
