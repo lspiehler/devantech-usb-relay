@@ -230,10 +230,22 @@ var relayDemo = function(params, callback) {
 
 module.exports = {
     setRelayPosition: function(params, callback) {
-        setRelayPosition(params, callback);
+        setRelayPosition(params, function(err) {
+            if(err) {
+                callback(err);
+            } else {
+                callback(false);
+            }
+        });
     },
     getRelayPositions: function(callback) {
-        getRelayPositions(callback);
+        getRelayPositions(function(err, data) {
+            if(err) {
+                callback(err, false);
+            } else {
+                callback(false, data);
+            }
+        });
     },
     startRelayDemo: function() {
         relayDemo({relay: 1, position: 0}, function(err) {
