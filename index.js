@@ -2,6 +2,8 @@ const serialpath = '/dev/ttyACM0';
 var opened = false;
 var receivecallback = false;
 var responsetimer = null;
+var cachevalid = false;
+var relaypositions = [0, 0, 0, 0, 0, 0, 0, 0];
 
 const SerialPort = require('serialport');
 const serialport = new SerialPort(serialpath, {
@@ -138,20 +140,28 @@ var requestRelayPositions = function(callback) {
 }
 
 var getRelayPositions = function(callback) {
-    if(receivecallback) {
-        callback('Cannot make requests requiring a response until previous response is received from the board');
+    if(cachevalid===true) {
+        callback(false, relaypositions);
+        //console.log('Using cache');
     } else {
-        requestRelayPositions(function(err, data) {
-            if(err) {
-                callback(err, false);
-            } else {
-                let b = [];
-                for (var i = 0; i < 8; i++) {
-                    b[i] = (data[0] >> i) & 1;
+        if(receivecallback) {
+            callback('Cannot make requests requiring a response until previous response is received from the board');
+        } else {
+            requestRelayPositions(function(err, data) {
+                if(err) {
+                    callback(err, false);
+                } else {
+                    let b = [];
+                    for (var i = 0; i < 8; i++) {
+                        b[i] = (data[0] >> i) & 1;
+                    }
+                    relaypositions = b;
+                    //console.log('cache is now valid');
+                    cachevalid = true;
+                    callback(false, b);
                 }
-                callback(false, b);
-            }
-        });
+            });
+        }
     }
 }
 
@@ -172,6 +182,10 @@ var setRelayPosition = function(params, callback) {
                         console.trace(err);
                         callback(err);
                     } else {
+                        relaypositions[params.relay - 1] = params.position;
+                        //console.log('Relay:' + (params.relay - 1));
+                        //console.log('Position: ' + params.position);
+                        //console.log(relaypositions);
                         callback(false);
                     }
                 });
@@ -185,7 +199,7 @@ var setRelayPosition = function(params, callback) {
 }
 
 var relayDemo = function(params, callback) {
-    console.log(params);
+    console.log(relaypositions);
     setTimeout(function() {
         setRelayPosition({relay: params.relay, position: params.position}, function(err) {
             if(err) {
@@ -206,7 +220,7 @@ var relayDemo = function(params, callback) {
                     if(err) {
                         callback(err);
                     } else {
-                        console.log(data);
+                        //console.log(data);
                         callback(false);
                     }
                     relayDemo({relay: relay, position: position}, function(err) {
@@ -255,3 +269,9 @@ module.exports = {
         });
     }
 }
+
+relayDemo({relay: 1, position: 0}, function(err) {
+    if(err) {
+        console.log(err);
+    }
+});
