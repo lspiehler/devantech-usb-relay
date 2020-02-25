@@ -36,7 +36,7 @@ const dict = {
 }
 
 process.on('exit', function(err) {
-    console.log(err);
+    //console.log(err);
 });
 
 serialport.on('error', function (err) {
@@ -145,7 +145,11 @@ var getRelayPositions = function(callback) {
             if(err) {
                 callback(err, false);
             } else {
-                callback(false, data);
+                let b = [];
+                for (var i = 0; i < 8; i++) {
+                    b[i] = (data[0] >> i) & 1;
+                }
+                callback(false, b);
             }
         });
     }
@@ -224,8 +228,18 @@ var relayDemo = function(params, callback) {
     }, 100);
 }
 
-relayDemo({relay: 1, position: 0}, function(err) {
-    if(err) {
-        console.log(err);
+module.exports = {
+    setRelayPosition: function(params, callback) {
+        setRelayPosition(params, callback);
+    },
+    getRelayPositions: function(callback) {
+        getRelayPositions(callback);
+    },
+    startRelayDemo: function() {
+        relayDemo({relay: 1, position: 0}, function(err) {
+            if(err) {
+                console.log(err);
+            }
+        });
     }
-});
+}
