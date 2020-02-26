@@ -69,6 +69,14 @@ serialport.on('drain', function () {
 serialport.on('open', function () {
     opened = true;
     console.log('Port opened event called');
+    getRelayPositions(function(err, positions) {
+        if(err) {
+            console.log('Failed initializing relay positions');
+            console.trace(err);
+        } else {
+            console.log('Initialized relay positions');
+        }
+    });
 });
 
 var responseTimeout = function() {
@@ -147,9 +155,12 @@ var getRelayPositions = function(callback) {
         if(receivecallback) {
             callback('Cannot make requests requiring a response until previous response is received from the board');
         } else {
+            //send cached copy, but make sure it is updated and accurate behind the scenes
+            callback(false, relaypositions);
             requestRelayPositions(function(err, data) {
                 if(err) {
-                    callback(err, false);
+                    //callback(err, false);
+                    console.trace(err);
                 } else {
                     let b = [];
                     for (var i = 0; i < 8; i++) {
@@ -158,7 +169,7 @@ var getRelayPositions = function(callback) {
                     relaypositions = b;
                     //console.log('cache is now valid');
                     cachevalid = true;
-                    callback(false, b);
+                    //callback(false, b);
                 }
             });
         }
