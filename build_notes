@@ -1,0 +1,7 @@
+#CentOS 8 Dev Build Notes
+yum install epel-release
+yum install glibc libgcc libstdc++ python36 ca-certificates tar vim
+
+curl -sL https://rpm.nodesource.com/setup_12.x | bash -
+yum install -y nodejs
+npm install serialport
