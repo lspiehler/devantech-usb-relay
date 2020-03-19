@@ -1,6 +1,6 @@
 {
   "name": "devantech-usb-relay",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Library for controlling a devantech USB-RLY16L, an 8-port USB relay board.",
   "main": "index.js",
   "dependencies": {
