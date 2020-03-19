@@ -103,7 +103,7 @@ var openSerialPort = function(portpath, callback) {
 var validRelay = function(relay) {
     //console.log(relay);
     if(Number.isInteger(relay)) {
-        if(relay >= 0 && relay < 8) {
+        if(relay > 0 && relay < 9) {
             return true;
         } else {
             false;
@@ -193,7 +193,7 @@ var setRelayPosition = function(params, callback) {
                         console.trace(err);
                         callback(err);
                     } else {
-                        relaypositions[params.relay] = params.position;
+                        relaypositions[params.relay - 1] = params.position;
                         //console.log('Relay:' + (params.relay - 1));
                         //console.log('Position: ' + params.position);
                         //console.log(relaypositions);
@@ -280,3 +280,9 @@ module.exports = {
         });
     }
 }
+
+relayDemo({relay: 1, position: 0}, function(err) {
+    if(err) {
+        console.log(err);
+    }
+});
