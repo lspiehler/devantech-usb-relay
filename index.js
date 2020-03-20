@@ -288,11 +288,3 @@ module.exports = {
         });
     }
 }
-
-getRelayPositions(function(err, data) {
-    if(err) {
-       console.log(false);
-    } else {
-        console.log(data);
-    }
-});
