@@ -43,6 +43,8 @@ process.on('exit', function(err) {
 
 serialport.on('error', function (err) {
     opened = false;
+    receivecallback = false;
+    clearTimeout(responsetimer);
     console.trace(err);
 });
 
@@ -59,6 +61,8 @@ serialport.on('data', function (data) {
 
 serialport.on('close', function (err) {
     opened = false;
+    receivecallback = false;
+    clearTimeout(responsetimer);
     console.log(err);
 });
 
@@ -69,14 +73,18 @@ serialport.on('drain', function () {
 serialport.on('open', function () {
     opened = true;
     console.log('Port opened event called');
-    getRelayPositions(function(err, positions) {
-        if(err) {
-            console.log('Failed initializing relay positions');
-            console.trace(err);
-        } else {
-            console.log('Initialized relay positions');
-        }
-    });
+    if(receivecallback) {
+        //do not get relay positions because a request is already pending
+    } else {
+        getRelayPositions(function(err, positions) {
+            if(err) {
+                console.log('Failed initializing relay positions');
+                console.trace(err);
+            } else {
+                console.log('Initialized relay positions');
+            }
+        });
+    }
 });
 
 var responseTimeout = function() {
@@ -122,6 +130,7 @@ var validPosition = function(position) {
 }
 
 var requestRelayPositions = function(callback) {
+    receivecallback = callback;
     if(opened===false) {
         openSerialPort(serialpath, function(err) {
             if(err) {
@@ -131,7 +140,6 @@ var requestRelayPositions = function(callback) {
             }
         });
     } else {
-        receivecallback = callback;
         serialport.write(dict.GETRELAYSTATES, 'binary', function(err) {
             if(err) {
                 console.trace(err);
@@ -280,3 +288,11 @@ module.exports = {
         });
     }
 }
+
+getRelayPositions(function(err, data) {
+    if(err) {
+       console.log(false);
+    } else {
+        console.log(data);
+    }
+});
